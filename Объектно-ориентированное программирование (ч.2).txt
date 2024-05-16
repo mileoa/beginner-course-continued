@@ -1,0 +1,184 @@
+class Ship:
+
+    def __init__(self, max_health, health, max_capacity,
+                 weapon_list, weapon_max_amount, x, y):
+        self.max_health = max_health # Максимальное здоровье
+        self.health = health # Текущее здоровье
+
+        
+        self.weapon_max_amount = weapon_max_amount # Макисмальное кол-во оружия
+        self.max_capacity = max_capacity # Вместительность корабля
+        self.used_capacity = 0 # Использовано вместительности
+        self.weapon_list = [] # Список установленного оружия
+        for i in range (len(weapon_list)):
+            self.Install_weapon(weapon_list[i])
+            
+        self.x = x # Положение в пространстве по оси x
+        self.y = y # Положение в пространстве по оси y
+        
+    def Fly_to(self, x, y):
+        self.x = x
+        self.y = y
+        return True
+    
+    def Repair(self, repair_value):
+        if self.health + repair_value > self.max_health:
+            self.health = self.max_health
+        else:
+            self.health += repair_value
+        return True
+    
+    def Get_damage(self, damage_value):
+        if damage_value >= self.health:
+            self.Die()
+        else:
+            self.health -= damage_value
+            for i in range(len(self.weapon_list)):
+                self.weapon_list[i].Get_damage(damage_value)
+        return True
+            
+    def Give_damage(self, target):
+        total_damage = 0
+        for i in range(len(self.weapon_list)):
+            if self.weapon_list[i].Is_target_in_radius(self, target) and self.weapon_list[i].health != 0:
+                total_damage += self.weapon_list[i].attack_damage
+        return total_damage
+            
+    def Install_weapon(self, new_weapon):
+        if (self.weapon_max_amount == len(self.weapon_list)
+                or self.used_capacity + new_weapon.weight > self.max_capacity):
+            return False
+        self.weapon_list.append(new_weapon)
+        self.used_capacity += new_weapon.weight
+        return True
+        
+    def Remove_weapon(self, slot):
+        if slot >= len(self.weapon_list):
+            return False
+        self.used_capacity -= self.weapon_list[slot].weight
+        self.weapon_list.pop(slot)
+        return True
+
+    def Die(self):
+        self.health = 0
+        for i in range(len(self.weapon_list)):
+            self.weapon_list[i].Break()
+        return True
+    
+class Weapon:
+
+    def __init__(self, max_health, health, attack_damage,
+                 attack_radius, installed_upgrade, weight):
+        self.max_health = max_health # Макс. здоровье
+        self.health = health # Текущее здоровье
+        self.attack_damage = attack_damage # Урон оружия
+        self.attack_radius = attack_radius # Радиус атаки
+        self.installed_upgrade = installed_upgrade # Установленное улучшение
+        self.weight = weight # Вес оружия
+        
+    def Get_damage(self, damage_value):
+        damage_value_for_weapon = damage_value // 100 + 1 # Урон по оружию
+        if damage_value_for_weapon >= self.health:
+            self.Break()
+        else:
+            self.health -= damage_value_for_weapon
+        return True
+
+    def Repair(self, repair_value):
+        if self.health + repair_value > max_health:
+            self.health = self.max_health
+        else:
+            self.health += repair_value
+        return True
+
+    def Break(self):
+        self.health = 0
+        return True
+        
+    def Is_target_in_radius(self, shooter, target):
+        if (shooter.x + self.attack_radius >= target.x and
+                shooter.y + self.attack_radius >= target.y):
+            return True
+        return False
+
+    def Install_upgrade(self, new_upgrade):
+        if not isinstance(self.installed_upgrade, type(None)):
+            self.Remove_upgrade()
+        self.installed_upgrade = new_upgrade
+        self.attack_damage += self.installed_upgrade.attack_improvement_value
+        self.attack_radius += self.installed_upgrade.radius_improvement_value
+        return True
+
+    def Remove_upgrade(self):
+        self.attack_damage -= self.installed_upgrade.attack_improvement_value
+        self.attack_radius -= self.installed_upgrade.radius_improvement_value
+        self.installed_upgrade = None
+        return True
+
+class Upgrade:
+    
+    def __init__(self, attack_improvement_value, radius_improvement_value):
+        self.attack_improvement_value = attack_improvement_value
+        self.radius_improvement_value = radius_improvement_value
+
+
+# Создание оружия игрока
+player_weapon_1 = Weapon(100, 100, 100, 100, None, 100)
+print("Оружие игрока имеет силу атаки", player_weapon_1.attack_damage,
+       "и радиус атаки", player_weapon_1.attack_radius)
+
+# Создание улучшения оружия для игрока и его установка
+player_upgrade = Upgrade(100, 100)
+player_weapon_1.Install_upgrade(player_upgrade)
+print("Оружие игрока после установки улучшения имеет силу атаки",
+        player_weapon_1.attack_damage, "и радиус атаки",
+        player_weapon_1.attack_radius)
+
+# Создание корабля игрока
+player_ship = Ship(400, 300, 1000, [player_weapon_1], 3, 100, 100)
+
+# Создание оружия противника
+enemy_weapon_1 = Weapon(100, 1, 200, 200, None, 100)
+
+# Создание корабля противника
+enemy_ship = Ship(400, 400, 1000, [enemy_weapon_1], 1, 1000, 1000)
+
+
+# Противник пытается выстрелить, но находится слишком далеко
+print("Противник попытался выстрелить.")
+player_ship.Get_damage(enemy_ship.Give_damage(player_ship))
+print("Здоровье игрока осталось прежним: ", player_ship.health)
+
+# Игрок приблежается к врагу и пытается выстрелить
+player_ship.Fly_to(1020, 1020)
+print("Игрок подлетел к противнику.")
+print("Игрок попытался выстрелить.")
+enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
+print("Здоровье противника уменьшилось до", enemy_ship.health)
+print("Также сломалось оружие противника. Оно теперь имеет",
+        enemy_ship.weapon_list[0].health, "здоровья")
+
+# Противник чинится
+print("Противник пытается починиться.")
+enemy_ship.Repair(100)
+print("Теперь здоровье противника", enemy_ship.health)
+
+# Противник снимает сломанное оружие
+enemy_ship.Remove_weapon(0)
+
+# Игрок снимает улучшение с оружия и стреляет в противника 3 раза
+print("Игрок снимает улучшение с оружия.")
+player_ship.weapon_list[0].Remove_upgrade()
+print("Оружие игрока после снятия улучшения имеет силу атаки",
+        player_weapon_1.attack_damage, "и радиус атаки",
+        player_weapon_1.attack_radius)
+
+print("Игрок попытался выстрелить.")
+enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
+print("Здоровье противника уменьшилось до", enemy_ship.health)
+print("Игрок попытался выстрелить.")
+enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
+print("Здоровье противника уменьшилось до", enemy_ship.health)
+print("Игрок попытался выстрелить.")
+enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
+print("Здоровье противника уменьшилось до", enemy_ship.health)
