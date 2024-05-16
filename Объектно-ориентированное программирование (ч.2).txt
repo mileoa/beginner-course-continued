@@ -146,6 +146,7 @@ enemy_ship = Ship(400, 400, 1000, [enemy_weapon_1], 1, 1000, 1000)
 
 # Противник пытается выстрелить, но находится слишком далеко
 print("Противник попытался выстрелить.")
+print("Урон равен", enemy_ship.Give_damage(player_ship))
 player_ship.Get_damage(enemy_ship.Give_damage(player_ship))
 print("Здоровье игрока осталось прежним: ", player_ship.health)
 
@@ -153,6 +154,7 @@ print("Здоровье игрока осталось прежним: ", player_
 player_ship.Fly_to(1020, 1020)
 print("Игрок подлетел к противнику.")
 print("Игрок попытался выстрелить.")
+print("Урон равен", player_ship.Give_damage(enemy_ship))
 enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
 print("Здоровье противника уменьшилось до", enemy_ship.health)
 print("Также сломалось оружие противника. Оно теперь имеет",
@@ -174,11 +176,14 @@ print("Оружие игрока после снятия улучшения им
         player_weapon_1.attack_radius)
 
 print("Игрок попытался выстрелить.")
+print("Урон равен", player_ship.Give_damage(enemy_ship))
 enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
 print("Здоровье противника уменьшилось до", enemy_ship.health)
 print("Игрок попытался выстрелить.")
+print("Урон равен", player_ship.Give_damage(enemy_ship))
 enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
 print("Здоровье противника уменьшилось до", enemy_ship.health)
 print("Игрок попытался выстрелить.")
+print("Урон равен", player_ship.Give_damage(enemy_ship))
 enemy_ship.Get_damage(player_ship.Give_damage(enemy_ship))
 print("Здоровье противника уменьшилось до", enemy_ship.health)
