@@ -1,0 +1,230 @@
+Задание 4.1.
+import random
+
+def pow2(x):
+    return x * x
+
+class Robot:
+    
+    def __init__(self, max_health, health, max_speed, x, y, temperature,
+                installed_sensor):
+        self.__max_health = max_health # Максимальное здоровье
+        self.__health = health # Здоровье
+        self.__max_speed = max_speed # Максимальная скорость робота
+        self.__speed = 0 # Скорость робота
+        self.__noise = 0 # текущий шум робота
+        self.__temperature = temperature
+        self.__x = x # Положение в пространстве по оси x
+        self.__y = y # Положение в пространстве по оси y
+        
+        # Устанавливаем датчик
+        self.__installed_sensor = None
+        if not isinstance(installed_sensor, type(None)):
+            self.Install_sensor(installed_sensor)
+
+    def Get_x(self):
+        return self.__x
+
+    def Get_y(self):
+        return self.__y
+
+    def Get_temperature(self):
+        return self.__temperature
+
+    def Get_noise(self):
+        return self.__noise
+
+    def Get_health(self):
+        return self.__health
+
+    def Run(self, new_speed):
+        if new_speed >= self.__max_speed:
+            self.__speed = self.__max_speed
+        else:
+            self.__speed = new_speed
+        self.__noise += 100
+        self.__temperature += 50
+        
+    def Stop(self):
+        self.__speed = 0
+        self.__noise -= 100
+        self.__temperature -= 50
+        
+    def Die(self):
+        self.__speed = 0
+        self.__noise = 0
+        self.__temperature = 0
+        self.__health = 0
+
+    def Move(self, new_x, new_y):
+        if self.__speed == 0:
+            return
+        self.__x = new_x
+        self.__y = new_y
+        if not isinstance(self.__installed_sensor, type(None)):
+            self.__installed_sensor.Move(new_x, new_y) 
+        
+    def Increase_health(self, inc_value):
+        if self.__health + inc_value >= self.__max_health:
+            self.__health = self.__max_health
+        else:
+            self.__health += inc_value
+    
+    def Decrease_health(self, dec_value):
+        if self.__health == 0:
+            return
+        elif self.__health - dec_value <= 0:
+            self.Die()
+        else:
+            self.__health -= dec_value
+
+    def Install_sensor(self, sensor):
+        if not isinstance(self.__installed_sensor, type(None)):
+            self.Remove_sensor()
+        self.__installed_sensor = sensor
+        self.__installed_sensor.Move(self.__x, self.__y)
+        self.__noise += self.__installed_sensor.Get_noise()
+        self.__temperature += self.__installed_sensor.Get_temperature()
+        
+    
+    def Remove_sensor(self):
+        if isinstance(self.__installed_sensor, type(None)):
+            return
+        self.__noise -= self.__installed_sensor.Get_noise()
+        self.__temperature -= self.__installed_sensor.Get_temperature()
+        self.__installed_sensor = None
+
+    def Use_sensor(self, target):
+        return self.__installed_sensor.Measure(target)
+
+class Healer(Robot):
+    
+    def __init__(self, max_health, health, max_speed, x, y, temperature,
+                 installed_sensor, heal_power, resurrect_ablility):
+        super().__init__(max_health, health, max_speed, x, y, temperature,
+                        installed_sensor)
+        self.__heal_power = heal_power # Сила лечения
+        self.__resurrect_ablility = resurrect_ablility # Количество доступных воскрешений
+        
+    def Heal(self, target):
+        if target.Get_health() == 0:
+            return
+        target.Increase_health(self.__heal_power)
+
+    def Resurrect(self, target):
+        if target.Get_health() != 0 or self.__resurrect_ablility == 0:
+            return
+        target.Increase_health(self.__heal_power)
+    
+class Destroyer(Robot):
+
+    def __init__(self, max_health, health, max_speed, x, y, temperature,
+                installed_sensor, attack_power):
+        super().__init__(max_health, health, max_speed, x, y, temperature,
+                        installed_sensor)
+        self.__attack_power = attack_power # Сила атаки
+
+    def Attack(self, target):
+        target.Decrease_health(self.__attack_power)
+
+    def Can_kill_one_shot(self, target):
+        return target.Get_health() <= self.__attack_power
+        
+
+class Sensor:
+
+    def __init__(self, radius, error, x, y, noise, temperature,
+                low_measurement_limit, up_measurement_limit):
+        self.__radius = radius # Радиус работы дачтика
+        self._error = error # Погрешность датчика в процентах
+        self.__noise = noise # Шум от датчика
+        self.__temperature = temperature # Температура датчика
+
+        # Нижняя и верхняя граница диапазона измерения
+        self.__low_measurement_limit = low_measurement_limit
+        self.__up_measurement_limit = up_measurement_limit
+        
+        self.__x = x # Положение в пространстве по оси x
+        self.__y = y # Положение в пространстве по оси y
+
+    def Get_x(self):
+        return self.__x
+
+    def Get_y(self):
+        return self.__y
+
+    def Get_temperature(self):
+        return self.__temperature
+
+    def Get_noise(self):
+        return self.__noise
+
+    def Move(self, new_x, new_y):
+        self.__x = new_x
+        self.__y = new_y
+
+    def Tune(self):
+        self._error -= int(self._error * 0.5)
+    
+    def Is_target_in_radius(self, target):
+        return (pow2(target.Get_x() - self.__x) +
+                pow2(target.Get_y() - self.__y)
+                ) <= pow2(self.__radius)
+    
+    def Is_in_measurement_range(self, value):
+        return (value <= self.__up_measurement_limit and
+                value >= self.__low_measurement_limit)
+
+
+class SoundLevelMeter(Sensor):
+
+    def __init__(self, radius, error, x, y, noise, temperature,
+                low_measurement_limit, up_measurement_limit):
+        super().__init__(radius, error, x, y, noise, temperature,
+                        low_measurement_limit, up_measurement_limit)
+
+    def Measure(self, target):
+        if not self.Is_target_in_radius(target):
+            return
+        target_noise = target.Get_noise()
+        errored_noise = random.randint(int(target_noise - target_noise * self._error/100),
+                                              int(target_noise + target_noise * self._error/100))
+        if not self.Is_in_measurement_range(errored_noise):
+            return
+        return errored_noise
+    
+    def Is_noise_harmful(self, noise):
+        return noise >= 80
+
+class Pyrometer(Sensor):
+
+    def __init__(self, radius, error, x, y, noise, temperature,
+                low_measurement_limit, up_measurement_limit):
+        super().__init__(radius, error, x, y, noise, temperature,
+                        low_measurement_limit, up_measurement_limit)
+    
+    def Measure(self, target):
+        if not self.Is_target_in_radius(target):
+            return
+        target_temperature = target.Get_temperature()
+        errored_temperature = random.randint(int(target_temperature - target_temperature * self._error/100),
+                                              int(target_temperature + target_temperature * self._error/100))
+        if not self.Is_in_measurement_range(errored_temperature):
+            return
+        return errored_temperature
+    
+    def Is_temperature_comfortable(self, temperature):
+        return temperature >= 24 and temperature <= 30
+
+
+sound_meter = SoundLevelMeter(100, 5, 0, 0, 0, 24, 0, 120)
+pyrometer = Pyrometer(101, 5, 100, 100, 100, 32, -100, 1000)
+
+robot_healer = Healer(100, 100, 100, 0, 0, 100, None, 50, 1)
+robot_destroyer = Destroyer(100, 100, 100, 0, 10, 200, pyrometer, 50)
+
+robot_healer.Install_sensor(sound_meter)
+
+
+print("Шум робота разрушителя", robot_healer.Use_sensor(robot_destroyer))
+print("Температура робота ремонтника", robot_destroyer.Use_sensor(robot_healer))
