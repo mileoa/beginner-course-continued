@@ -247,6 +247,9 @@ class Robot:
     def Get_noise(self):
         return self.__noise
 
+    def Get_health(self):
+        return self.__health
+
     def Run(self, new_speed):
         if new_speed >= self.__max_speed:
             self.__speed = self.__max_speed
@@ -271,9 +274,7 @@ class Robot:
         self.__y = new_y
         
     def Increase_health(self, inc_value):
-        if self.__health == 0:
-            return
-        elif self.__health + inc_value >= self.__max_health:
+        if self.__health + inc_value >= self.__max_health:
             self.__health = self.__max_health
         else:
             self.__health += inc_value
@@ -289,33 +290,36 @@ class Robot:
 
 class Healer(Robot):
     
-    def __init__(self, heal_power, max_health, health, max_speed):
-        super().__init__(max_health, health, max_speed)
+    def __init__(self, max_health, health, max_speed, x, y, temperature,
+                 heal_power, resurrect_ablility):
+        super().__init__(max_health, health, max_speed, x, y, temperature)
         self.__heal_power = heal_power # Сила лечения
-        self.__resurrect_ablility = 2 # Количество доступных воскрешений
+        self.__resurrect_ablility = resurrect_ablility # Количество доступных воскрешений
         
     def Heal(self, target):
-        if target.get_health == 0:
+        if target.Get_health() == 0:
             return
         target.Increase_health(self.__heal_power)
 
     def Resurrect(self, target):
-        if target.get_health != 0 or self.__resurrect_ablility == 0:
+        if target.Get_health() != 0 or self.__resurrect_ablility == 0:
             return
         target.Increase_health(self.__heal_power)
     
 class Destroyer(Robot):
 
-    def __init__(self, attack_power, max_health, health, max_speed):
-        super().__init__(max_health, health, max_speed)
+    def __init__(self, max_health, health, max_speed, x, y, temperature,
+                attack_power):
+        super().__init__(max_health, health, max_speed, x, y, temperature)
         self.__attack_power = attack_power # Сила атаки
 
     def Attack(self, target):
         target.Decrease_health(self.__attack_power)
 
     def Can_kill_one_shot(self, target):
-        return target.get_health() <= self.__attack_power
+        return target.Get_health() <= self.__attack_power
         
+
 class Sensor:
 
     def __init__(self, radius, error, x, y, noise, temperature,
