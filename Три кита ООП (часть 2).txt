@@ -228,3 +228,122 @@ robot_healer.Install_sensor(sound_meter)
 
 print("Шум робота разрушителя", robot_healer.Use_sensor(robot_destroyer))
 print("Температура робота ремонтника", robot_destroyer.Use_sensor(robot_healer))
+
+
+Задание 4.2.
+import random
+
+def pow2(x):
+    return x * x
+
+class Sensor:
+
+    def __init__(self, radius, error, x, y, noise, temperature,
+                low_measurement_limit, up_measurement_limit):
+        self.__radius = radius # Радиус работы дачтика
+        self._error = error # Погрешность датчика в процентах
+        self.__noise = noise # Шум от датчика
+        self.__temperature = temperature # Температура датчика
+
+        # Нижняя и верхняя граница диапазона измерения
+        self.__low_measurement_limit = low_measurement_limit
+        self.__up_measurement_limit = up_measurement_limit
+        
+        self.__x = x # Положение в пространстве по оси x
+        self.__y = y # Положение в пространстве по оси y
+
+    def Get_x(self):
+        return self.__x
+
+    def Get_y(self):
+        return self.__y
+
+    def Get_temperature(self):
+        return self.__temperature
+
+    def Get_noise(self):
+        return self.__noise
+
+    def Move(self, new_x, new_y):
+        self.__x = new_x
+        self.__y = new_y
+
+    def Tune(self):
+        self._error -= int(self._error * 0.5)
+    
+    def Is_target_in_radius(self, target):
+        return (pow2(target.Get_x() - self.__x) +
+                pow2(target.Get_y() - self.__y)
+                ) <= pow2(self.__radius)
+    
+    def Is_in_measurement_range(self, value):
+        return (value <= self.__up_measurement_limit and
+                value >= self.__low_measurement_limit)
+
+    def foo(self):
+        print("Метод вызван для Sensor")
+
+
+class SoundLevelMeter(Sensor):
+
+    def __init__(self, radius, error, x, y, noise, temperature,
+                low_measurement_limit, up_measurement_limit):
+        super().__init__(radius, error, x, y, noise, temperature,
+                        low_measurement_limit, up_measurement_limit)
+
+    def Measure(self, target):
+        if not self.Is_target_in_radius(target):
+            return
+        target_noise = target.Get_noise()
+        errored_noise = random.randint(int(target_noise - target_noise * self._error/100),
+                                              int(target_noise + target_noise * self._error/100))
+        if not self.Is_in_measurement_range(errored_noise):
+            return
+        return errored_noise
+    
+    def Is_noise_harmful(self, noise):
+        return noise >= 80
+
+    def foo(self):
+        print("Метод вызван для SoundLevelMeter")
+
+class Pyrometer(Sensor):
+
+    def __init__(self, radius, error, x, y, noise, temperature,
+                low_measurement_limit, up_measurement_limit):
+        super().__init__(radius, error, x, y, noise, temperature,
+                        low_measurement_limit, up_measurement_limit)
+    
+    def Measure(self, target):
+        if not self.Is_target_in_radius(target):
+            return
+        target_temperature = target.Get_temperature()
+        errored_temperature = random.randint(int(target_temperature - target_temperature * self._error/100),
+                                              int(target_temperature + target_temperature * self._error/100))
+        if not self.Is_in_measurement_range(errored_temperature):
+            return
+        return errored_temperature
+    
+    def Is_temperature_comfortable(self, temperature):
+        return temperature >= 24 and temperature <= 30
+
+    def foo(self):
+        print("Метод вызван для Pyrometer")
+
+# Массив для хранения объектов
+array = []
+
+# Заполняем массив случайными объектами
+for i in range (500):
+    if random.randint(1, 2) == 1:
+        array.append(SoundLevelMeter(100, 5, i, 0, 0, 24, 0, 120))
+    else:
+        array.append(Pyrometer(101, 5, i, 100, 100, 32, -100, 1000))
+
+# Вызываем foo для случайных объектов
+for i in range (len(array)):
+    array[i].foo()
+
+Получили такой вывод, потому что использовали полиморфизм подтипов.
+При вызове foo() выбиралась нужная реализация foo в зависимости от типа объекта.
+
