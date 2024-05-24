@@ -1,5 +1,3 @@
-import random
-
 class Robot:
     
     def __init__(self, max_health, health, max_speed, x, y, temperature):
@@ -30,14 +28,13 @@ class Robot:
     def Run(self, new_speed):
         if new_speed <= 0:
             return
-        elif new_speed >= self.__max_speed:
+        self.__speed = new_speed
+        if self.__speed > self.__max_speed:
             self.__speed = self.__max_speed
-        else:
-            self.__speed = new_speed
         self.__noise += 100
         self.__temperature += 50
         assert self.__noise >= 0
-        assert self.__speed > 0
+        assert self.__speed > 0 and self.__speed <= self.__max_speed
         assert self.__temperature >= 0 and self.__temperature <=1000
         
     def Stop(self):
@@ -45,7 +42,7 @@ class Robot:
         self.__noise -= 100
         self.__temperature -= 50
         assert self.__speed = 0
-        assert self.__speed > 0
+        assert self.__noise >= 0
         assert self.__temperature >= 0 and self.__temperature <=1000
         
     def Die(self):
@@ -62,22 +59,18 @@ class Robot:
     def Increase_health(self, inc_value):
         if inc_value <= 0:
             return
-        elif self.__health + inc_value >= self.__max_health:
+        self.__health += inc_value
+        if self.__health > self.__max_health:
             self.__health = self.__max_health
-        else:
-            self.__health += inc_value
-        assert self.__health > 0
+        assert self.__health > 0 and self.__health <= self.__max_health
 
     def Decrease_health(self, dec_value):
-        if dec_value <= 0:
+        if dec_value <= 0 or self.__health == 0:
             return
-        elif self.__health == 0:
-            return
-        elif self.__health - dec_value <= 0:
+        self.__health -= dec_value
+        if self.__health <= 0:
             self.Die()
-        else:
-            self.__health -= dec_value
-        assert self.__health >= 0 
+        assert self.__health >= 0 and self.__health <= self.__max_health 
 
 class Healer(Robot):
     
