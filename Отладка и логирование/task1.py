@@ -31,16 +31,16 @@ class Robot:
         self.__speed = new_speed
         if self.__speed > self.__max_speed:
             self.__speed = self.__max_speed
-        self.__noise += 100
-        self.__temperature += 50
+        self.__noise = self.__speed * 2
+        self.__temperature = self.__speed * 3
         assert self.__noise >= 0
         assert self.__speed > 0 and self.__speed <= self.__max_speed
         assert self.__temperature >= 0 and self.__temperature <=1000
         
     def Stop(self):
         self.__speed = 0
-        self.__noise -= 100
-        self.__temperature -= 50
+        self.__noise = 0
+        self.__temperature = 0
         assert self.__speed = 0
         assert self.__noise >= 0
         assert self.__temperature >= 0 and self.__temperature <=1000
