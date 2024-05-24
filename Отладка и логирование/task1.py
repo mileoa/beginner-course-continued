@@ -9,7 +9,7 @@ class Robot:
         self.__temperature = temperature
         self.__x = x # Положение в пространстве по оси x
         self.__y = y # Положение в пространстве по оси y
-
+    
     def Get_x(self):
         return self.__x
 
@@ -55,6 +55,8 @@ class Robot:
             return
         self.__x = new_x
         self.__y = new_y
+        assert self.__x <= 1000 and self.__x >= -1000
+        assert self.__y <= 1000 and self.__y >= -1000
   
     def Increase_health(self, inc_value):
         if inc_value <= 0:
@@ -106,6 +108,7 @@ class Destroyer(Robot):
     def Can_kill_one_shot(self, target):
         if instanceof(target, type(None)):
            return
-        return target.Get_health() <= self.__attack_power
-        
+        result = target.Get_health() <= self.__attack_power
+        assert isinstanceof(result, bool)
+        return result
 
