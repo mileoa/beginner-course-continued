@@ -150,7 +150,8 @@ class Healer(Robot):
         logger.info('Метод лечения выполнен.')
 
     def Resurrect(self, target):
-        logger.info('Пытаемся выполнить метод воскрешения.')
+        logger.info('Пытаемся выполнить метод воскрешения. Доступно воскрешений %s',
+                    self.__resurrect_ablility)
         if isinstance(target, type(None)):
             logger.warning('Цель не передана. Операция не будет выполнена.')
         elif self.__resurrect_ablility == 0: 
@@ -162,6 +163,8 @@ class Healer(Robot):
         target.Increase_health(self.__heal_power)
         self.__resurrect_ablility -= 1
         logger.info('Метод воскрешения завершен.')
+        logger.info('Доступно воскрешений %s', self.__resurrect_ablility)
+        assert self.__resurrect_ablility >= 0
     
 class Destroyer(Robot):
 
