@@ -160,6 +160,7 @@ class Healer(Robot):
             logger.warning('Здоровье цели не равно 0. Операция не будет выполнена.')
             return
         target.Increase_health(self.__heal_power)
+        self.__resurrect_ablility -= 1
         logger.info('Метод воскрешения завершен.')
     
 class Destroyer(Robot):
