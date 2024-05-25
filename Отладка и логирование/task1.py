@@ -41,7 +41,7 @@ class Robot:
             logger.warning('Значение меньше 0. Операция не будет выполнена.')
             return
         self.__noise = value
-        logger.info('Уровень шума установлен ', self.__noise)
+        logger.info('Уровень шума установлен.')
         assert self.__noise >= 0
     
     def Set_temperature(self, value):
@@ -55,7 +55,7 @@ class Robot:
 
     def Set_speed(self, value):
         logger.info('Пытаемся установить новую скорость роботу.')
-        if value <= 0:
+        if value < 0:
             logger.warning('Значение скорости не может быть < 0.')
             return
         self.__speed = value 
@@ -89,6 +89,9 @@ class Robot:
         logger.info('Пытаемся переместить робота.')
         if self.__speed == 0:
             logger.warning('Робот стоит и не может быть перемещен.')
+            return
+        elif new_x > 1000 or new_x < -1000 or new_y > 1000 or new_y < -1000:
+            logger.warning('Робот не может быть перемещен за пределы карты.')
             return
         self.__x = new_x
         self.__y = new_y
@@ -178,3 +181,14 @@ robot_destroyer = Destroyer(100, 100, 100, 0, 10, 200, 50)
 robot_destroyer_enemy = Destroyer(100, 100, 100, 0, 10, 200, 50)
 
 robot_destroyer.Attack(robot_destroyer_enemy)
+robot_destroyer.Can_kill_one_shot(robot_destroyer_enemy)
+
+robot_healer.Run(100)
+robot_healer.Move_to(1001, 101)
+robot_healer.Move_to(101, 101)
+
+robot_destroyer_enemy.Attack(robot_destroyer)
+robot_destroyer_enemy.Attack(robot_destroyer)
+
+robot_healer.Resurrect(robot_destroyer)
+robot_healer.Heal(robot_destroyer)
