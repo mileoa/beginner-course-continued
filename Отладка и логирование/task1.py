@@ -16,30 +16,29 @@ class Robot:
         self.__y = y # Положение в пространстве по оси y
     
     def Get_x(self):
-        logger.info('Возвращаем значение положения x ', self.__x)
+        logger.info('Возвращаем значение положения x.')
         return self.__x
 
     def Get_y(self):
-        logger.info('Возвращаем значение положения y ', self.__y)
+        logger.info('Возвращаем значение положения y.')
         return self.__y
 
     def Get_temperature(self):
-        logger.info('Возвращаем значение температуры ', self.__temperature)
+        logger.info('Возвращаем значение температуры.')
         return self.__temperature
 
     def Get_noise(self):
-        logger.info('Возвращаем значение уровня шума ', self.__noise)
+        logger.info('Возвращаем значение уровня шума.')
         return self.__noise
 
     def Get_health(self):
-        logger.info('Возвращаем значение здоровья ', self.__health)
+        logger.info('Возвращаем значение здоровья.')
         return self.__health
 
     def Set_noise(self, value):
         logger.info('Пытаемся изменить уровень шума робота.')
         if value < 0:
-            logger.warning('Значение меньше 0.',
-                            ' Операция не будет выполнена.')
+            logger.warning('Значение меньше 0. Операция не будет выполнена.')
             return
         self.__noise = value
         logger.info('Уровень шума установлен ', self.__noise)
@@ -48,11 +47,10 @@ class Robot:
     def Set_temperature(self, value):
         logger.info('Пытаемся изменить температуру робота.')
         if value < 0 or self.__temperature > 1000:
-            logger.warning('Новое значение вне допустимого диапазона.',
-                            ' Операция не будет выполнена.')
+            logger.warning('Новое значение вне допустимого диапазона. Операция не будет выполнена.')
             return
         self.__temperature = value
-        logger.info('Температура робота установлена ', self.__temperature)
+        logger.info('Температура робота установлена.')
         assert self.__temperature >= 0 and self.__temperature <=1000
 
     def Set_speed(self, value):
@@ -63,7 +61,7 @@ class Robot:
         self.__speed = value 
         if self.__speed > self.__max_speed:
             self.__speed = self.__max_speed
-        logger.info('Скорость робота установлена ', self.__speed)
+        logger.info('Скорость робота установлена.')
         assert self.__speed >= 0 and self.__speed <= self.__max_speed
 
     def Run(self, speed):
@@ -84,7 +82,7 @@ class Robot:
         logger.info('Пытаемся сделать робота мертвым.')
         self.Stop()
         self.__health = 0
-        logger.info('Робот мёртв.', self.__health)
+        logger.info('Робот мёртв.')
         assert self.__health == 0
 
     def Move_to(self, new_x, new_y):
@@ -94,32 +92,30 @@ class Robot:
             return
         self.__x = new_x
         self.__y = new_y
-        logger.info('Робот перемещен на коордианты x, y ', self.__x, ' ', self.__y)
+        logger.info('Робот перемещен.')
         assert self.__x <= 1000 and self.__x >= -1000
         assert self.__y <= 1000 and self.__y >= -1000
   
     def Increase_health(self, inc_value):
         logger.info('Пытаемся увеличить здоровье робота')
         if inc_value < 0:
-            logger.info('Значение увелечения меньше 0.',
-                        ' Операция не будет выполнена')
+            logger.info('Значение увелечения меньше 0. Операция не будет выполнена')
             return
         self.__health += inc_value
         if self.__health > self.__max_health:
             self.__health = self.__max_health
-        logger.info('Здоровье робота установлено', self.__health)
+        logger.info('Здоровье робота установлено')
         assert self.__health > 0 and self.__health <= self.__max_health
 
     def Decrease_health(self, dec_value):
         logger.info('Пытаемся уменьшить здоровье робота')
         if dec_value < 0 or self.__health == 0:
-            logger.warn('Значение изменения меньше 0 или здоровье цели',
-                    ' равно 0. Операция не может быть выполнена.')
+            logger.warn('Значение изменения меньше 0 или здоровье цели равно 0. Операция не будет выполнена.')
             return
         self.__health -= dec_value
         if self.__health <= 0:
             self.Die()
-        logger.info('Здоровье робота установлено', self.__health)
+        logger.info('Здоровье робота установлено.')
         assert self.__health >= 0 and self.__health <= self.__max_health 
 
 class Healer(Robot):
@@ -129,31 +125,24 @@ class Healer(Robot):
         super().__init__(max_health, health, max_speed, x, y, temperature)
         self.__heal_power = heal_power # Сила лечения
         self.__resurrect_ablility = resurrect_ablility # Количество доступных воскрешений
-        logger.info('Создан экземпляр класса Healer с полями max_health, health',
-                    'max_speed, x, y, temperature, heal_power, resurrect_ability равными ',
-                    self.__max_health, self.__health, self.__max_speed, self.__speed,
-                    self.__x, self.__y, self.__temperature, self.__heal_power,
-                    self.__resurrect_ability)
-
         
     def Heal(self, target):
         logger.info('Пытаемся выпонить метод лечения.')
-        if instanceof(target, type(None)) or target.Get_health() == 0:
-            logger.warning('Цель не передана или здоровье цели 0.',
-                            'Операция будет прервана.')
+        if isinstance(target, type(None)) or target.Get_health() == 0:
+            logger.warning('Цель не передана или здоровье цели 0. Операция не будет выполнена.')
             return
         target.Increase_health(self.__heal_power)
         logger.info('Метод лечения выполнен.')
 
     def Resurrect(self, target):
         logger.info('Пытаемся выполнить метод воскрешения.')
-        if instanceof(target, type(None)):
-            logger.warning('Цель не передана. Операция будет прервана.')
+        if isinstance(target, type(None)):
+            logger.warning('Цель не передана. Операция не будет выполнена.')
         elif self.__resurrect_ablility == 0: 
-            logger.warning('Способность к воскршению 0. Операция будет прервана.')
+            logger.warning('Способность к воскршению 0. Операция не будет выполнена.')
             return
         elif target.Get_health() != 0:
-            logger.warning('Здоровье цели не равно 0. Операция будет прервана.')
+            logger.warning('Здоровье цели не равно 0. Операция не будет выполнена.')
             return
         target.Increase_health(self.__heal_power)
         logger.info('Метод воскрешения завершен.')
@@ -164,28 +153,28 @@ class Destroyer(Robot):
                 attack_power):
         super().__init__(max_health, health, max_speed, x, y, temperature)
         self.__attack_power = attack_power # Сила атаки
-        logger.info('Создан экземпляр класса Destroyer с полями max_health, health',
-                    'max_speed, x, y, temperature, attack_power равными ',
-                    self.__max_health, self.__health, self.__max_speed, self.__speed,
-                    self.__x, self.__y, self.__temperature, self.__attack_power)
 
     def Attack(self, target):
         logger.info('Пытаемся выполнить метод атаки цели.')
-        if instanceof(target, type(None)):
+        if isinstance(target, type(None)):
             logger.warning('Цель не передана. Операция будет прервана.')
             return
         target.Decrease_health(self.__attack_power)
         logger.info('Метод атаки завершен.')
 
     def Can_kill_one_shot(self, target):
-        logger.info('Пытаемся выполнить метод проверки возможности убить цель',
-                    ' одним выстрелом.')
-        if instanceof(target, type(None)):
+        logger.info('Пытаемся выполнить метод проверки возможности убить цель одним выстрелом.')
+        if isinstance(target, type(None)):
             logger.warning('Цель не передана. Операция будет прервана.')
             return
         result = target.Get_health() <= self.__attack_power
-        assert isinstanceof(result, bool)
-        logger.info('Метод проверки возможности убить цель одним выстрелом',
-                    ' завершен.')
+        assert isinstance(result, bool)
+        logger.info('Метод проверки возможности убить цель одним выстрелом завершен.')
         return result
 
+robot_healer = Healer(100, 100, 100, 0, 0, 100, 50, 1)
+robot_destroyer = Destroyer(100, 100, 100, 0, 10, 200, 50)
+
+robot_destroyer_enemy = Destroyer(100, 100, 100, 0, 10, 200, 50)
+
+robot_destroyer.Attack(robot_destroyer_enemy)
