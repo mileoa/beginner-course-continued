@@ -19,7 +19,7 @@ class SimpleSortTests(unittest.TestCase):
         for i in range(100000):
             array = []
             for j in range(10):
-                array.append(random.randint(-100, 100))
+                array.append(random.randint(-5, 5))
             sort(array)
 
             for k in range(len(array) - 1):
