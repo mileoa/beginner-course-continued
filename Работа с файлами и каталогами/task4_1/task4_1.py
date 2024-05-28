@@ -33,7 +33,7 @@ def scan_folder(folder_path, extension, scan_subfolders):
 
     for i in range(len(current_dir_list)):
         # Если файл с нужным расширением, то добавляем в список.
-        if os.path.isfile(folder_path + '/' + current_dir_list[i]):
+        if os.path.isfile(os.path.join(folder_path, current_dir_list[i])):
             if has_right_extension(current_dir_list[i], extension):
                 files_list.append(current_dir_list[i])
             continue
@@ -44,7 +44,7 @@ def scan_folder(folder_path, extension, scan_subfolders):
         # Проваливаемся в папку, если надо.
         if not scan_subfolders:
              continue
-        subfolder_list = scan_folder(folder_path + '/' + current_dir_list[i],
+        subfolder_list = scan_folder(os.path.join(folder_path, current_dir_list[i]),
                                      extension, False)
         for j in range(len(subfolder_list[0])):
                 folders_list.append(subfolder_list[0][j])
