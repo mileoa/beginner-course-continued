@@ -22,13 +22,13 @@ class TestsLastCharOccurence(unittest.TestCase):
         for i in range(100000):
             string = []
             char = str(random.randint(0, 9))
-            i = -1
+            k = -1
             for j in range(random.randint(0, 10)):
                 string.append(str(random.randint(0, 9)))
                 if string[j] == char:
-                    i = j
+                    k = j
 
-            self.assertEqual(last_char_occurrence("".join(string), char), i)
+            self.assertEqual(last_char_occurrence("".join(string), char), k)
 
 if __name__ == "__main__":
     unittest.main()
