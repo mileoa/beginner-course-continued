@@ -15,6 +15,7 @@ for i in range(100):
     
     # Записываем ключ-значение в словарь.
     dictionary[random_key] = "".join(random_value)
+    assert len(dictionary) == i + 1
 
 # Считываем все значения из словаря по ключу и печатаем их.
 for key in dictionary:
@@ -23,3 +24,4 @@ for key in dictionary:
 # Удаляем все пары.
 for key in list(dictionary):
     dictionary.pop(key)
+assert len(dictionary) == 0
