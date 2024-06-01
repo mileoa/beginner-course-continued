@@ -1,21 +1,21 @@
 import random
 
-# Функция возвращает массив элементов, которые встретились в переданном массиве >= n раз. 
+# Функция возвращает массив элементов, которые встретились в переданном массиве >= n раз.
 def get_met_n(array, n):
     # Считаем сколько раз встречается элемент.
-    dict = {}
+    dcitionary = {}
     for i in array:
         if dict.get(i) is None:
-            dict[i] = 1
+            dcitionary[i] = 1
             continue
-        dict[i] += 1
-    
+        dcitionary[i] += 1
+
     # Фильтруем элементы.
-    for key, item in list(dict.items()):
+    for key, item in list(dcitionary.items()):
         if item < n:
-            dict.pop(key)
-            
-    return list(dict.keys())
+            dcitionary.pop(key)
+
+    return list(dcitionary.keys())
 
 # Заполняем массив случайными числами.
 array = []

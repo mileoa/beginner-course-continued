@@ -23,14 +23,14 @@ class TestsGetMetN(unittest.TestCase):
                 random_number = random.randint(0, 9)
                 array.append(random_number)
                 count[random_number] += 1
-            
+
             filtered = get_met_n(array, random_n)
             for i in range(len(count)):
                 if count[i] >= random_n:
                     self.assertIn(i, filtered)
                     continue
                 self.assertNotIn(i, filtered)
-    
+
     def test_border(self):
         self.assertEqual(get_met_n([], 0), [])
         self.assertEqual(get_met_n([1, 2, 3, 3], 0), [1, 2, 3])

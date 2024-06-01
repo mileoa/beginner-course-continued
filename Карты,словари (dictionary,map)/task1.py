@@ -7,12 +7,12 @@ for i in range(100):
     random_key = random.randint(-100, 100)
     while not isinstance(dictionary.get(random_key), type(None)):
         random_key = random.randint(-100, 100)
-    
+
     # Генерируем случайное значение.
     random_value = []
     for k in range(random.randint(0, 100)):
         random_value.append(str(random.randint(0, 9)))
-    
+
     # Записываем ключ-значение в словарь.
     dictionary[random_key] = "".join(random_value)
 

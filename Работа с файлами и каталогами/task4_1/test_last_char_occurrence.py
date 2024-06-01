@@ -3,7 +3,7 @@ import random
 from task4_1 import last_char_occurrence
 
 class TestsLastCharOccurence(unittest.TestCase):
-    
+
     def test_regressiion(self):
         self.assertEqual(last_char_occurrence("abcde", "d"), 3)
 
@@ -17,7 +17,7 @@ class TestsLastCharOccurence(unittest.TestCase):
         self.assertEqual(last_char_occurrence("", "z"), -1)
         self.assertEqual(last_char_occurrence("abcd", ""), -1)
         self.assertEqual(last_char_occurrence("", ""), -1)
-    
+
     def test_random(self):
         for i in range(100000):
             string = []

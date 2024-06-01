@@ -9,7 +9,7 @@ def last_char_occurrence(string, char):
     return -1
 
 def get_extension(file_name):
-    # Если файл начинается или заканчивается на '.' 
+    # Если файл начинается или заканчивается на '.'
     # или не имеет '.', то у него нет расширения.
     offset = last_char_occurrence(file_name, '.')
     if offset <= 0 or offset == len(file_name) - 1:
@@ -33,24 +33,24 @@ def scan_folder(folder_path, extension, scan_subfolders):
     files_list = []
     current_dir_list = os.listdir(folder_path)
 
-    for i in range(len(current_dir_list)):
+    for i in current_dir_list:
         # Если файл с нужным расширением, то добавляем в список.
         if os.path.isfile(os.path.join(folder_path, current_dir_list[i])):
             if has_right_extension(current_dir_list[i], extension) or extension == "*":
                 files_list.append(current_dir_list[i])
             continue
-        
+
         # Если это папка, то добавляем в список.
         folders_list.append(current_dir_list[i])
-        
+
         # Проваливаемся в папку, если надо.
         if not scan_subfolders:
-             continue
+            continue
         subfolder_list = scan_folder(os.path.join(folder_path, current_dir_list[i]),
                                      extension, False)
         for j in range(len(subfolder_list[0])):
-                folders_list.append(subfolder_list[0][j])
+            folders_list.append(subfolder_list[0][j])
         for j in range(len(subfolder_list[1])):
-                files_list.append(subfolder_list[1][j])
+            files_list.append(subfolder_list[1][j])
 
     return [folders_list, files_list]
