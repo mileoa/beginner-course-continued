@@ -1,7 +1,7 @@
 def pow2(x):
     return x * x
 
-class CommonEnity:
+class CommonEntity:
 
     def __init__(self):
         self._installed_upgrade = None
@@ -15,7 +15,7 @@ class CommonEnity:
         self._installed_upgrade = None
 
 
-class Ship(CommonEnity):
+class Ship(CommonEntity):
 
     def __init__(self, max_health, health, max_capacity,
                  weapon_list, weapon_max_amount, x, y,
@@ -117,7 +117,7 @@ class Ship(CommonEnity):
         self._installed_upgrade = None
 
 
-class Weapon(CommonEnity):
+class Weapon(CommonEntity):
 
     def __init__(self, max_health, health, attack_damage,
                  attack_radius, weight, installed_upgrade):
