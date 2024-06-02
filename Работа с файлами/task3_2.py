@@ -1,7 +1,9 @@
 import random
 
-first_number = random.randint(1, 10)
-second_number = random.randint(1, 10)
+numbers = []
+for i in range(random.randint(1, 10)):
+    numbers.append(random.randint(1, 10))
+
 path = "./task3_1/"
 
 def sum_numbers_from_file(fi):
@@ -16,16 +18,16 @@ def sum_numbers_from_file(fi):
         raise Exception
     return sum
 
-def sum_numbers_from_files(first_number, second_number, path):
+def sum_numbers_from_files(file_names, path):
     try:
-        fi1 = open(path + str(first_number) + ".txt", 'r')
-        fi2 = open(path + str(second_number) + ".txt", 'r')
-        return sum_numbers_from_file(fi1) + sum_numbers_from_file(fi2)
+        sum = 0
+        for i in file_names:
+            with open(path + str(i) + ".txt", 'r') as fi:
+                sum += sum_numbers_from_file(fi)
+        return sum
     except Exception:
         print("Произошла ошибка.")
         return
-    finally:
-        fi1.close()
-        fi2.close()
 
-print(sum_numbers_from_files(first_number, second_number, path))
+print(numbers)
+print(sum_numbers_from_files(numbers, path))
