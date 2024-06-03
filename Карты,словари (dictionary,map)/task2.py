@@ -7,11 +7,11 @@ def get_met_n(array: List[int], n: int) -> List[int]:
     dcitionary: Dict[int, int] = {}
     result: List[int] = []
     for i in array:
-        if i in dcitionary.keys():
-            dcitionary[i] += 1
-        else:
+        if dcitionary.get(i) is None:
             dcitionary[i] = 1
-        if dcitionary[i] >= n and i not in result:
+        else:
+            dcitionary[i] += 1
+        if dcitionary[i] == n:
             result.append(i)
 
     return result
