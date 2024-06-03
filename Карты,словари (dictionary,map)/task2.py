@@ -4,7 +4,7 @@ from typing import List, Dict
 # Функция возвращает массив элементов, которые встретились в переданном массиве >= n раз.
 def get_met_n(array: List[int], n: int) -> List[int]:
     # Считаем сколько раз встречается элемент.
-    dcitionary: Dict[int, str] = {}
+    dcitionary: Dict[int, int] = {}
     result: List[int] = []
     for i in array:
         if i in dcitionary.keys():
