@@ -1,9 +1,9 @@
 import random
-from typing import IO
+from typing import List, IO
 
-def sum_numbers_from_file(fi: IO) -> list:
+def sum_numbers_from_file(fi: IO[str]) -> List[int]:
     try:
-        file_sum: list = [0, 0]
+        file_sum: List[int] = [0, 0]
         line: str = fi.readline()
         line_count: int = 0
         while line != '':
@@ -16,12 +16,12 @@ def sum_numbers_from_file(fi: IO) -> list:
     except Exception:
         return [0, 1]
 
-def sum_numbers_from_files(file_names: list, path: str) -> list:
+def sum_numbers_from_files(file_names: List[int], path: str) -> List[int]:
     try:
-        files_sum: list = [0, 0]
+        files_sum: List[int] = [0, 0]
         for i in file_names:
             with open(path + str(i) + ".txt", 'r', -1, "utf-8") as fi:
-                sum_file: list = sum_numbers_from_file(fi)
+                sum_file: List[int] = sum_numbers_from_file(fi)
             if sum_file[1] != 0:
                 return [0, sum_file[1]]
             files_sum[0] += sum_file[0]
@@ -29,7 +29,7 @@ def sum_numbers_from_files(file_names: list, path: str) -> list:
     except Exception:
         return [0, 3]
 
-numbers: list = []
+numbers: List[int] = []
 for i in range(random.randint(1, 10)):
     numbers.append(random.randint(1, 10))
 
