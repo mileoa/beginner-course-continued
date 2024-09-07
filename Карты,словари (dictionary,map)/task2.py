@@ -1,20 +1,23 @@
 import random
 from typing import List, Dict
 
+
 # Функция возвращает массив элементов, которые встретились в переданном массиве >= n раз.
 def get_met_n(array: List[int], n: int) -> List[int]:
     # Считаем сколько раз встречается элемент.
-    dcitionary: Dict[int, int] = {}
+    elements_amount: Dict[int, int] = {}
     result: List[int] = []
     for i in array:
-        if dcitionary.get(i) is None:
-            dcitionary[i] = 1
+        if elements_amount.get(i) is None:
+            elements_amount[i] = 1
         else:
-            dcitionary[i] += 1
-        if dcitionary[i] == n:
+            elements_amount[i] += 1
+        if elements_amount[i] == n:
             result.append(i)
 
+    elements_amount = None
     return result
+
 
 # Заполняем массив случайными числами.
 array: List[int] = []
